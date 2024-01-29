@@ -79,8 +79,8 @@ fun PublishingExtension.applyToSub(subProject: Project) {
         maven("http://frankhan.top:8081/repository/maven-releases/") {
             isAllowInsecureProtocol = true
             credentials {
-                username = project.findProperty("taboolibUsername").toString()
-                password = project.findProperty("taboolibPassword").toString()
+                username = "admin"
+                password = "HanJiaLe052176a!@"
             }
         }
         mavenLocal()
