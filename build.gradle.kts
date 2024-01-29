@@ -76,11 +76,11 @@ subprojects
 
 fun PublishingExtension.applyToSub(subProject: Project) {
     repositories {
-        maven("http://frankhan.top:8081/repository/maven-releases/") {
+        maven("http://woleigedou.com/repository/maven-releases/") {
             isAllowInsecureProtocol = true
             credentials {
-                username = "admin"
-                password = "HanJiaLe052176a!@"
+                username = "user"
+                password = "password"
             }
         }
         mavenLocal()
