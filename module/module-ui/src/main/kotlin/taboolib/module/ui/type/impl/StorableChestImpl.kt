@@ -94,7 +94,7 @@ open class StorableChestImpl(title: String) : ChestImpl(title), StorableChest {
                     val firstSlot = rule.firstSlot(it.inventory, currentItem)
                     // 目标位置不存在任何物品
                     // 防止覆盖物品
-                    if (firstSlot >= 0 && rule.readItem(it.inventory, firstSlot).isAir) {
+                    if (firstSlot >= 0 && rule.readItem(it.inventory, firstSlot, it.clickEvent().click).isAir) {
                         // 设置物品
                         rule.writeItem(it.inventory, currentItem, firstSlot, it.clickEvent().click)
                         // 移除物品
@@ -113,7 +113,7 @@ open class StorableChestImpl(title: String) : ChestImpl(title), StorableChest {
                     if (rule.checkSlot(it.inventory, cursor, action.getCurrentSlot(it))) {
                         it.isCancelled = true
                         // 提取物品
-                        action.setCursor(it, rule.readItem(it.inventory, action.getCurrentSlot(it)))
+                        action.setCursor(it, rule.readItem(it.inventory, action.getCurrentSlot(it), it.clickEvent().click))
                         // 写入物品
                         rule.writeItem(it.inventory, cursor, action.getCurrentSlot(it), it.clickEvent().click)
                     } else if (it.rawSlot >= 0 && it.rawSlot < it.inventory.size) {
@@ -140,7 +140,7 @@ open class StorableChestImpl(title: String) : ChestImpl(title), StorableChest {
         }
 
         /** 读取物品回调 **/
-        var readItem: ((inventory: Inventory, slot: Int) -> ItemStack?) = { inventory, slot ->
+        var readItem: ((inventory: Inventory, slot: Int, type: BukkitClickType) -> ItemStack?) = { inventory, slot, _ ->
             if (slot in 0 until inventory.size) inventory.getItem(slot)
             else null
         }
@@ -203,6 +203,10 @@ open class StorableChestImpl(title: String) : ChestImpl(title), StorableChest {
          * 读取物品回调
          */
         override fun readItem(readItem: (inventory: Inventory, slot: Int) -> ItemStack?) {
+            this.readItem = { inventory, slot, _ -> readItem(inventory, slot) }
+        }
+
+        override fun readItem(readItem: (inventory: Inventory, slot: Int, type: BukkitClickType) -> ItemStack?) {
             this.readItem = readItem
         }
     }

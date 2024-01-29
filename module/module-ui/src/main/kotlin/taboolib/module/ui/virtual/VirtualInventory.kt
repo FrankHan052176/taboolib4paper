@@ -111,12 +111,20 @@ class VirtualInventory(val bukkitInventory: Inventory, storageContents: List<Ite
         remoteInventory?.sendSlotChange(slot, item ?: ItemStack(Material.AIR))
     }
 
-    override fun addItem(vararg p0: ItemStack?): HashMap<Int, ItemStack> {
+    override fun addItem(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
         return bukkitInventory.addItem(*p0)
     }
 
-    override fun removeItem(vararg p0: ItemStack?): HashMap<Int, ItemStack> {
+    override fun removeItem(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
         return bukkitInventory.removeItem(*p0)
+    }
+
+    override fun removeItemAnySlot(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
+        val map = HashMap<Int, ItemStack>()
+        for (p in p0) {
+            map.putAll(bukkitInventory.removeItemAnySlot(p))
+        }
+        return map
     }
 
     override fun getContents(): Array<ItemStack?> {
@@ -132,8 +140,8 @@ class VirtualInventory(val bukkitInventory: Inventory, storageContents: List<Ite
         return getStorageItems().toTypedArray()
     }
 
-    override fun setStorageContents(p0: Array<ItemStack>) {
-        setStorageItems(p0.toList())
+    override fun setStorageContents(p0: Array<out ItemStack?>) {
+        setStorageItems(p0.filterNotNull())
     }
 
     override fun contains(p0: Material): Boolean {
@@ -196,6 +204,12 @@ class VirtualInventory(val bukkitInventory: Inventory, storageContents: List<Ite
         bukkitInventory.clear()
     }
 
+    override fun close(): Int {
+        val cnt = viewers.size
+        bukkitInventory.close()
+        return cnt
+    }
+
     override fun getViewers(): MutableList<HumanEntity> {
         return remoteInventory?.viewer?.let { mutableListOf(it) } ?: mutableListOf()
     }
@@ -205,6 +219,10 @@ class VirtualInventory(val bukkitInventory: Inventory, storageContents: List<Ite
     }
 
     override fun getHolder(): InventoryHolder? {
+        return bukkitInventory.holder
+    }
+
+    override fun getHolder(p0: Boolean): InventoryHolder? {
         return bukkitInventory.holder
     }
 

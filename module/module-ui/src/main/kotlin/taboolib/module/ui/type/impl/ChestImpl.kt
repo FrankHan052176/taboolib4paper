@@ -1,5 +1,7 @@
 package taboolib.module.ui.type.impl
 
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -358,10 +360,21 @@ open class ChestImpl(override var title: String) : Chest {
     }
 
     /**
+     * 创建标题
+     */
+    open fun createTitleC(): Component {
+        return MiniMessage.miniMessage().deserialize(title)
+    }
+
+    /**
      * 构建页面
      */
     override fun build(): Inventory {
-        lastInventory = Bukkit.createInventory(holderCallback(this), if (rows > 0) rows * 9 else slots.size * 9, createTitle())
+        lastInventory = if (Bukkit.getVersion().lowercase().contains("paper")) {
+            Bukkit.createInventory(holderCallback(this), if (rows > 0) rows * 9 else slots.size * 9, createTitleC())
+        }else {
+            Bukkit.createInventory(holderCallback(this), if (rows > 0) rows * 9 else slots.size * 9, createTitle())
+        }
         // 虚拟化
         if (virtualized) {
             lastInventory = lastInventory.virtualize(virtualizedStorageContents)

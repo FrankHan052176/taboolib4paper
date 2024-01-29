@@ -35,4 +35,12 @@ class VirtualInventoryView(val remoteInventory: RemoteInventory) : InventoryView
     override fun getTitle(): String {
         return remoteInventory.title
     }
+
+    override fun getOriginalTitle(): String {
+        return remoteInventory.title
+    }
+
+    override fun setTitle(p0: String) {
+        remoteInventory.title = p0
+    }
 }

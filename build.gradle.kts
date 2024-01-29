@@ -24,6 +24,7 @@ subprojects {
         }
         mavenLocal()
         mavenCentral()
+        maven("https://repo.papermc.io/repository/maven-public/")
     }
 
     dependencies {
@@ -75,14 +76,11 @@ subprojects
 
 fun PublishingExtension.applyToSub(subProject: Project) {
     repositories {
-        maven("http://ptms.ink:8081/repository/releases") {
+        maven("http://frankhan.top:8081/repository/maven-releases/") {
             isAllowInsecureProtocol = true
             credentials {
                 username = project.findProperty("taboolibUsername").toString()
                 password = project.findProperty("taboolibPassword").toString()
-            }
-            authentication {
-                create<BasicAuthentication>("basic")
             }
         }
         mavenLocal()

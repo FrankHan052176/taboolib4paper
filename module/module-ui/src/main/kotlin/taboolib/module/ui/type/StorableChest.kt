@@ -56,6 +56,11 @@ interface StorableChest : Chest {
          * 读取物品回调
          */
         fun readItem(readItem: (inventory: Inventory, slot: Int) -> ItemStack?)
+
+        /**
+         * 读取物品回调
+         */
+        fun readItem(readItem: (inventory: Inventory, slot: Int, type: BukkitClickType) -> ItemStack?)
     }
 }
 

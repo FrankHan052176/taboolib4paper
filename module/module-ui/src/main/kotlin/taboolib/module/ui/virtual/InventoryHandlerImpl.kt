@@ -105,7 +105,7 @@ class InventoryHandlerImpl : InventoryHandler() {
         override val viewer: Player,
         val container: Any,
         val cursorItem: ItemStack,
-        override val title: String,
+        override var title: String,
     ) : RemoteInventory {
 
         val air = ItemStack(Material.AIR)

@@ -55,20 +55,28 @@ class VirtualStorageInventory(val sourceInventory: VirtualInventory) : Inventory
         delegateInventory.setItem(p0, p1)
     }
 
-    override fun addItem(vararg p0: ItemStack?): HashMap<Int, ItemStack> {
+    override fun addItem(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
         return delegateInventory.addItem(*p0)
     }
 
-    override fun removeItem(vararg p0: ItemStack?): HashMap<Int, ItemStack> {
+    override fun removeItem(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
         return delegateInventory.removeItem(*p0)
     }
 
-    override fun getContents(): Array<ItemStack> {
-        return delegateInventory.contents
+    override fun removeItemAnySlot(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
+        val map = HashMap<Int, ItemStack>()
+        for (p in p0) {
+            map.putAll(delegateInventory.removeItemAnySlot(p))
+        }
+        return map
     }
 
-    override fun setContents(p0: Array<out ItemStack>) {
-        sourceInventory.setStorageItems(p0.toList())
+    override fun getContents(): Array<ItemStack> {
+        return delegateInventory.contents.filterNotNull().toTypedArray()
+    }
+
+    override fun setContents(p0: Array<out ItemStack?>) {
+        sourceInventory.setStorageItems(p0.filterNotNull())
         delegateInventory.contents = p0
     }
 
@@ -76,7 +84,7 @@ class VirtualStorageInventory(val sourceInventory: VirtualInventory) : Inventory
         return contents
     }
 
-    override fun setStorageContents(p0: Array<out ItemStack>) {
+    override fun setStorageContents(p0: Array<out ItemStack?>) {
         setContents(p0)
     }
 
@@ -140,6 +148,12 @@ class VirtualStorageInventory(val sourceInventory: VirtualInventory) : Inventory
         delegateInventory.clear()
     }
 
+    override fun close(): Int {
+        val cnt = viewers.size
+        delegateInventory.close()
+        return cnt
+    }
+
     override fun getViewers(): MutableList<HumanEntity> {
         return arrayListOf()
     }
@@ -149,6 +163,10 @@ class VirtualStorageInventory(val sourceInventory: VirtualInventory) : Inventory
     }
 
     override fun getHolder(): InventoryHolder? {
+        return null
+    }
+
+    override fun getHolder(p0: Boolean): InventoryHolder? {
         return null
     }
 

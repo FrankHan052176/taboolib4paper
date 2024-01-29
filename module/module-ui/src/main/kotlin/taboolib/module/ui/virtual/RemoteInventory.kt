@@ -24,7 +24,7 @@ interface RemoteInventory {
     val id: Int
 
     /** 标题 */
-    val title: String
+    var title: String
 
     /** 刷新页面 */
     fun refresh(contents: List<ItemStack>, storageContents: List<ItemStack>? = null, cursorItem: ItemStack = viewer.itemOnCursor)
