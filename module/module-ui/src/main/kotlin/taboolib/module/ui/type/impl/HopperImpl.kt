@@ -1,5 +1,6 @@
 package taboolib.module.ui.type.impl
 
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.event.inventory.InventoryType
@@ -10,7 +11,7 @@ import taboolib.module.ui.virtual.virtualize
 open class HopperImpl(title: String) : ChestImpl(title) {
 
     override fun build(): Inventory {
-        var inventory = Bukkit.createInventory(holderCallback(this), InventoryType.HOPPER, title)
+        var inventory = Bukkit.createInventory(holderCallback(this), InventoryType.HOPPER, MiniMessage.miniMessage().deserialize(title))
         if (virtualized) {
             inventory = inventory.virtualize()
         }

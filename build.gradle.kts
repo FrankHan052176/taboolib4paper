@@ -57,14 +57,14 @@ subprojects {
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8"
+            jvmTarget = "17"
             freeCompilerArgs = listOf("-Xjvm-default=all")
         }
     }
 
     configure<JavaPluginConvention> {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -76,13 +76,6 @@ subprojects
 
 fun PublishingExtension.applyToSub(subProject: Project) {
     repositories {
-        maven("http://woleigedou.com/repository/maven-releases/") {
-            isAllowInsecureProtocol = true
-            credentials {
-                username = "user"
-                password = "password"
-            }
-        }
         mavenLocal()
     }
     publications {

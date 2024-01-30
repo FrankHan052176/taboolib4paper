@@ -1,5 +1,7 @@
 package taboolib.module.ui.type.impl
 
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
@@ -170,8 +172,8 @@ open class PageableChestImpl<T>(title: String) : ChestImpl(title), PageableChest
         return isNext(page, elementsCache.size, menuSlots.size)
     }
 
-    override fun createTitle(): String {
-        return title.replace("%p", (page + 1).toString())
+    override fun createTitle(): Component {
+        return MiniMessage.miniMessage().deserialize(title.replace("%p", (page + 1).toString()))
     }
 
     override fun resetElementsCache() {

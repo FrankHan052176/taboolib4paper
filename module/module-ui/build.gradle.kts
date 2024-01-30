@@ -17,7 +17,3 @@ dependencies {
     // 低版本兼容
     implementation(project(":module:module-ui-legacy"))
 }
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}

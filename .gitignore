@@ -1,4 +1,5 @@
+.github
+.tools
 .gradle
 .idea
-build
-build.gradle.kts
+**/build

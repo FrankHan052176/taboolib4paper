@@ -1,5 +1,6 @@
 package taboolib.module.ui.type.impl
 
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -31,7 +32,7 @@ open class AnvilImpl(title: String) : ChestImpl(title), Anvil, AnvilCallback {
     }
 
     override fun build(): Inventory {
-        var inventory = Bukkit.createInventory(holderCallback(this), InventoryType.ANVIL, title)
+        var inventory = Bukkit.createInventory(holderCallback(this), InventoryType.ANVIL, MiniMessage.miniMessage().deserialize(title))
         if (virtualized) {
             inventory = inventory.virtualize()
         }

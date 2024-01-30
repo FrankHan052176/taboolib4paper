@@ -355,14 +355,7 @@ open class ChestImpl(override var title: String) : Chest {
     /**
      * 创建标题
      */
-    open fun createTitle(): String {
-        return title
-    }
-
-    /**
-     * 创建标题
-     */
-    open fun createTitleC(): Component {
+    open fun createTitle(): Component {
         return MiniMessage.miniMessage().deserialize(title)
     }
 
@@ -370,11 +363,7 @@ open class ChestImpl(override var title: String) : Chest {
      * 构建页面
      */
     override fun build(): Inventory {
-        lastInventory = if (Bukkit.getVersion().lowercase().contains("paper")) {
-            Bukkit.createInventory(holderCallback(this), if (rows > 0) rows * 9 else slots.size * 9, createTitleC())
-        }else {
-            Bukkit.createInventory(holderCallback(this), if (rows > 0) rows * 9 else slots.size * 9, createTitle())
-        }
+        lastInventory = Bukkit.createInventory(holderCallback(this), if (rows > 0) rows * 9 else slots.size * 9, createTitle())
         // 虚拟化
         if (virtualized) {
             lastInventory = lastInventory.virtualize(virtualizedStorageContents)
