@@ -10,7 +10,6 @@ import taboolib.common5.FileWatcher
 import taboolib.library.configuration.ConfigurationSection
 import taboolib.module.configuration.Configuration
 import taboolib.module.configuration.SecuredFile
-import taboolib.module.configuration.Type.YAML
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
@@ -30,15 +29,17 @@ class ResourceReader(val clazz: Class<*>, val migrate: Boolean = true) {
 
     init {
         Language.languageCode.forEach { code ->
-            val bytes = runningResourcesInJar["${Language.path}/$code.yml"]
+            val fileName = runningResourcesInJar.keys.first { it.startsWith("${Language.path}/$code") }
+            val bytes = runningResourcesInJar[fileName]
             if (bytes != null) {
                 val nodes = HashMap<String, Type>()
                 val source = bytes.toString(StandardCharsets.UTF_8)
-                val sourceFile = Configuration.loadFromString(source, YAML)
+                val fileType = Configuration.getTypeFromExtension(fileName.substringAfterLast('.'))
+                val sourceFile = Configuration.loadFromString(source, fileType)
                 // 加载内存中的原件
                 loadNodes(sourceFile, nodes, code)
                 // 释放文件
-                val file = releaseResourceFile("${Language.path}/$code.yml")
+                val file = releaseResourceFile(fileName)
                 // 移除文件监听
                 if (isFileWatcherHook) {
                     FileWatcher.INSTANCE.removeListener(file)
@@ -65,7 +66,7 @@ class ResourceReader(val clazz: Class<*>, val migrate: Boolean = true) {
                     }
                 }
             } else {
-                warning("Missing language file: $code.yml")
+                warning("Missing language file: $code.${fileName.substringAfterLast('.')}")
             }
         }
     }
@@ -74,10 +75,11 @@ class ResourceReader(val clazz: Class<*>, val migrate: Boolean = true) {
         migrateLegacyVersion(file)
         file.getKeys(false).forEach { node ->
             when (val obj = file[node]) {
+                // 标准文本
                 is String -> {
                     nodesMap[node] = TypeText(obj)
                 }
-
+                // 列表
                 is List<*> -> {
                     nodesMap[node] = TypeList(obj.mapNotNull { sub ->
                         if (sub is Map<*, *>) {
@@ -87,17 +89,15 @@ class ResourceReader(val clazz: Class<*>, val migrate: Boolean = true) {
                         }
                     })
                 }
-
+                // 嵌套
                 is ConfigurationSection -> {
                     val type = loadNode(obj.getValues(false).map { it.key to it.value!! }.toMap(), code, node)
                     if (type != null) {
                         nodesMap[node] = type
                     }
                 }
-
-                else -> {
-                    warning("Unsupported language node: $node ($code)")
-                }
+                // 其他
+                else -> warning("Unsupported language node: $node ($code)")
             }
         }
     }
@@ -157,7 +157,6 @@ class ResourceReader(val clazz: Class<*>, val migrate: Boolean = true) {
                             }
                         }
                     }
-
                     else -> obj
                 }
             }
