@@ -39,6 +39,7 @@ val minecraftServerObject: Any by unsafeLazy {
 /**
  * 获取 OBC 类
  */
+// FIXME 此方式将在 Paper 1.20.5 中失效
 fun obcClass(name: String): Class<*> {
     return Class.forName("org.bukkit.craftbukkit.${MinecraftVersion.minecraftVersion}.$name")
 }
@@ -58,7 +59,7 @@ fun nmsClass(name: String): Class<*> {
  * 禁用数据包监听器
  */
 fun disablePacketListener() {
-    ChannelExecutor.disable()
+    ProtocolHandler.disable()
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -113,11 +114,13 @@ fun Player.sendBundlePacket(vararg packet: Any): CompletableFuture<Void> {
  * 向玩家发送打包数据包（异步，1.19.4+）
  */
 fun Player.sendBundlePacket(packet: List<Any>): CompletableFuture<Void> {
-    return if (MinecraftVersion.isBundlePacketSupported) {
-        sendPacket(nmsProxy<ConnectionGetter>().newBundlePacket(packet))
-    } else {
-        CompletableFuture.allOf(*packet.map { sendPacket(it) }.toTypedArray())
+    if (MinecraftVersion.isBundlePacketSupported) {
+        val bundlePacket = PacketSender.createBundlePacket(packet)
+        if (bundlePacket != null) {
+            return sendPacket(bundlePacket)
+        }
     }
+    return CompletableFuture.allOf(*packet.map { sendPacket(it) }.toTypedArray())
 }
 
 /**
@@ -150,10 +153,13 @@ fun Player.sendBundlePacketBlocking(vararg packet: Any) {
  */
 fun Player.sendBundlePacketBlocking(packet: List<Any>) {
     if (MinecraftVersion.isBundlePacketSupported) {
-        sendPacketBlocking(nmsProxy<ConnectionGetter>().newBundlePacket(packet))
-    } else {
-        packet.forEach { sendPacketBlocking(it) }
+        val bundlePacket = PacketSender.createBundlePacket(packet)
+        if (bundlePacket != null) {
+            sendPacketBlocking(bundlePacket)
+            return
+        }
     }
+    packet.forEach { sendPacketBlocking(it) }
 }
 
 /**
