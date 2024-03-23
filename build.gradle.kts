@@ -76,9 +76,24 @@ subprojects
 
 fun PublishingExtension.applyToSub(subProject: Project) {
     repositories {
+        maven("http://192.168.1.11:8081/repository/maven-releases") {
+            isAllowInsecureProtocol = true
+            credentials {
+                username = "admin"
+                password = "HanJiaLe052176abc!@"
+            }
+            authentication {
+                create<BasicAuthentication>("basic")
+            }
+        }
         mavenLocal()
     }
     publications {
+        repositories {
+            maven("http://frankhan.top:8081/repository/maven-releases") {
+                isAllowInsecureProtocol = true
+            }
+        }
         create<MavenPublication>("maven") {
             artifactId = subProject.name
             groupId = "io.izzel.taboolib"
