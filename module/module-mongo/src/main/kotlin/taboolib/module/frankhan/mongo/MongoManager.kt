@@ -11,6 +11,7 @@ import org.bson.Document
 import org.bson.UuidRepresentation
 import org.bson.conversions.Bson
 import taboolib.common.LifeCycle
+import taboolib.common.asyncThread
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.severe
@@ -70,6 +71,7 @@ class MongoManager(config: Configuration) {
         collectionName: String,
         query: Bson = Filters.empty(),
     ): List<Document> {
+        submitAsync {  }
         if (disabled) return emptyList()
         val collection = database.getCollection(getCollectionName(collectionName))
         return collection.find(query).toList()
@@ -176,7 +178,7 @@ class MongoManager(config: Configuration) {
         if (disabled) {
             future.complete(Optional.empty())
         }else {
-            submitAsync {
+            asyncThread {
                 future.complete(Optional.ofNullable(callback.apply(database)))
             }
         }

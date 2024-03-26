@@ -5,6 +5,7 @@ import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.StreamEntryID
 import taboolib.common.LifeCycle
+import taboolib.common.asyncThread
 import taboolib.common.platform.Awake
 import taboolib.common.platform.function.info
 import taboolib.common.platform.function.pluginId
@@ -247,7 +248,7 @@ class RedisManager(config: Configuration) {
 
     fun <T:Any> executeFuture(callback: Function<Jedis, T?>): CompletableFuture<Optional<T>> {
         val future = CompletableFuture<Optional<T>>()
-        submitAsync {
+        asyncThread {
             if (disabled) future.complete(Optional.empty())
             try {
                 redisPool.resource.use { jedis ->
