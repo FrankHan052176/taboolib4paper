@@ -9,6 +9,5 @@ dependencies {
     compileOnly(project(":module:module-configuration"))
     compileOnly(project(":platform:platform-bukkit"))
     // 服务端
-    compileOnly("ink.ptms.core:v12004:12004-minimize:universal")
-    compileOnly("ink.ptms.core:v11200:11200-minimize")
+    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
 }

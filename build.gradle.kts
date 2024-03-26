@@ -15,6 +15,8 @@ subprojects {
     apply(plugin = "maven-publish")
 
     repositories {
+        mavenCentral()
+        maven("https://maven.enginehub.org/repo/")
         maven("https://libraries.minecraft.net")
         maven("https://repo1.maven.org/maven2")
         maven("https://maven.aliyun.com/repository/central")
@@ -22,9 +24,13 @@ subprojects {
         maven("http://ptms.ink:8081/repository/releases") {
             isAllowInsecureProtocol = true
         }
-        mavenLocal()
-        mavenCentral()
+        maven("https://repo.oraxen.com/releases")
         maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo.william278.net/releases")
+        maven("https://mvn.lumine.io/repository/maven/")
+        maven(url = "https://mvn.lumine.io/repository/maven-public/")
+        maven { url = uri("https://jitpack.io") }
+        mavenLocal()
     }
 
     dependencies {

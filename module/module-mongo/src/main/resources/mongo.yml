@@ -1,0 +1,6 @@
+disable: true
+host: 'localhost'
+port: '27017'
+database: 'minecraft'
+connection-uri: ''
+collection-prefix: missingbyriver

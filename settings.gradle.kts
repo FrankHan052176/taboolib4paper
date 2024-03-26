@@ -43,3 +43,11 @@ include(
     "platform:platform-velocity",
     "platform:platform-velocity-impl"
 )
+include("module:module-another-ui")
+findProject(":module:module-another-ui")?.name = "module-another-ui"
+include("expansion:expansion-item-tags")
+findProject(":expansion:expansion-item-tags")?.name = "expansion-item-tags"
+include("module:module-redis")
+findProject(":module:module-redis")?.name = "module-redis"
+include("module:module-mongo")
+findProject(":module:module-mongo")?.name = "module-mongo"

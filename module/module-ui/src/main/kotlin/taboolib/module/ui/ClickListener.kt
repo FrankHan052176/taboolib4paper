@@ -93,8 +93,7 @@ internal object ClickListener {
             if (event.isCancelled) {
                 event.itemDrop.remove()
             } else {
-                e.view.cursor.type = Material.AIR
-                e.view.setCursor(null)
+                e.view.cursor = null
             }
         }
     }
