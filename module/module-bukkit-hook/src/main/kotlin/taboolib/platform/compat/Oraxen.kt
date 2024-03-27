@@ -18,3 +18,11 @@ fun String?.getItem(): ItemStack {
     val material = Material.matchMaterial(this)
     return ItemStack(material?:Material.AIR)
 }
+
+fun String?.getItem(default: ItemStack): ItemStack {
+    if (this.isNullOrBlank()) return ItemStack(Material.AIR)
+    val oraxen = OraxenItems.getItemById(this)
+    if (oraxen != null) return oraxen.build()
+    val material = Material.matchMaterial(this)
+    return material?.let { ItemStack(it) }?:default
+}

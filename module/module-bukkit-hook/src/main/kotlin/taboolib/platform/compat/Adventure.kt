@@ -11,11 +11,11 @@ fun String.component(player: Player): Component {
     } catch (ex: NoClassDefFoundError) {
         this
     }
-    return try {
-        MiniMessage.miniMessage().deserialize(papi)
-    } catch (ex: NoClassDefFoundError) {
-        Component.text(papi)
-    }
+    return papi.component()
+}
+
+fun String.component(): Component {
+    return MiniMessage.miniMessage().deserialize(this)
 }
 
 fun List<String>.components(player: Player): List<Component> {
@@ -24,9 +24,9 @@ fun List<String>.components(player: Player): List<Component> {
     } catch (ex: NoClassDefFoundError) {
         this
     }
-    return try {
-        papi.map { MiniMessage.miniMessage().deserialize(it) }
-    } catch (ex: NoClassDefFoundError) {
-        papi.map { Component.text(it) }
-    }
+    return papi.components()
+}
+
+fun List<String>.components(): List<Component> {
+    return this.map { MiniMessage.miniMessage().deserialize(it) }
 }

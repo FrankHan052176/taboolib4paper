@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `maven-publish`
     java
-    id("org.jetbrains.kotlin.jvm") version "1.8.22" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.9.22" apply false
     id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 

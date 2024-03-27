@@ -2,8 +2,6 @@
 
 package taboolib.platform.util
 
-import com.mojang.authlib.GameProfile
-import com.mojang.authlib.properties.Property
 import org.bukkit.ChatColor
 import org.bukkit.Color
 import org.bukkit.Material
@@ -17,7 +15,6 @@ import org.bukkit.potion.PotionData
 import org.bukkit.potion.PotionEffect
 import org.tabooproject.reflex.Reflex.Companion.getProperty
 import org.tabooproject.reflex.Reflex.Companion.invokeMethod
-import org.tabooproject.reflex.Reflex.Companion.setProperty
 import taboolib.library.xseries.XMaterial
 import taboolib.library.xseries.XSkull
 import taboolib.module.chat.colored
