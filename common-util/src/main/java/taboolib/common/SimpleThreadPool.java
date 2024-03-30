@@ -1,5 +1,6 @@
 package taboolib.common;
 
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -27,11 +28,12 @@ public class SimpleThreadPool {
         }
     }
 
-    public static void asyncTimer(Runnable runnable, long delay, long period, TimeUnit timeUnit) {
+    public static ScheduledFuture<?> asyncTimer(Runnable runnable, long delay, long period, TimeUnit timeUnit) {
         try {
-            scheduler.scheduleAtFixedRate(runnable, delay, period, timeUnit);
+            return scheduler.scheduleAtFixedRate(runnable, delay, period, timeUnit);
         } catch (Exception e) {
             e.fillInStackTrace();
+            return null;
         }
     }
 }

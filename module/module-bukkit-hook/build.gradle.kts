@@ -21,4 +21,5 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.16.0")
     compileOnly("net.kyori:adventure-text-serializer-gson:4.16.0")
     compileOnly("net.william278.huskhomes:huskhomes-bukkit:4.6.1")
+    compileOnly(fileTree("libs"))
 }
