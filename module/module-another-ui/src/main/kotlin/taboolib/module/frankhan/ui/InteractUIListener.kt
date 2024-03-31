@@ -55,7 +55,7 @@ object InteractUIListener {
                         val need = cursor.maxStackSize - cursor.amount
                         val amount = min(need, slot.amount)
                         e.view.cursor = cursor.subtract(amount)
-                        topInv.setItem(e.slot, slot.add(amount))
+                        topInv.setItem(e.slot, ui.setFun[e.slot]?.apply(e.whoClicked as Player, ui, slot.add(amount))?:slot.add(amount))
                     }else {
                         e.view.cursor = slot
                         topInv.setItem(e.slot, cursor)
@@ -63,7 +63,7 @@ object InteractUIListener {
                 }else if (cursor.isAir()) {
                     if (slot.isAir()) return
                     e.view.cursor = slot
-                    topInv.setItem(e.slot,ItemStack(Material.AIR))
+                    topInv.setItem(e.slot,ui.setFun[e.slot]?.apply(e.whoClicked as Player, ui, ItemStack(Material.AIR))?:ItemStack(Material.AIR))
                 }
             }
             e.isRightClick -> {
@@ -78,7 +78,7 @@ object InteractUIListener {
                     if (sid != cid) return
                     val new = cursor.clone()
                     new.amount = 1
-                    topInv.setItem(e.slot, new)
+                    topInv.setItem(e.slot, ui.setFun[e.slot]?.apply(e.whoClicked as Player, ui, new)?:new)
                     e.view.cursor = cursor.subtract()
                 }
             }
@@ -90,7 +90,7 @@ object InteractUIListener {
                     val item = if (items.isEmpty()) {
                         ItemStack(Material.AIR)
                     }else items.iterator().next()
-                    topInv.setItem(e.rawSlot, item)
+                    topInv.setItem(e.rawSlot, ui.setFun[e.slot]?.apply(e.whoClicked as Player, ui, item)?:item)
                     return
                 }
                 e.isCancelled = true
@@ -100,11 +100,11 @@ object InteractUIListener {
                     if (!ui.limitSlot[slot]!!.check(e.whoClicked as Player, current) ||
                         (cid != sid && item.isNotAir())) continue
                     if (item.isAir()) {
-                        topInv.setItem(slot, current)
+                        topInv.setItem(slot, ui.setFun[e.slot]?.apply(e.whoClicked as Player, ui, current)?:current)
                         e.view.bottomInventory.setItem(e.slot, ItemStack(Material.AIR))
                     }else {
                         val amount = min(item.maxStackSize - item.amount, current.amount)
-                        topInv.setItem(slot, item.add(amount))
+                        topInv.setItem(slot, ui.setFun[e.slot]?.apply(e.whoClicked as Player, ui, item.add(amount))?:item.add(amount))
                         e.view.bottomInventory.setItem(e.slot, current.subtract(amount))
                     }
                     break

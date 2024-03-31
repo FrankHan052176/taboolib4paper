@@ -15,6 +15,7 @@ class InteractUI(var title: String, var rows: Int) {
     var lastInv: Inventory? = null
     val getFun = HashMap<Int, Function<Unit, ItemStack?>>()
     val clickFun = HashMap<Int, A3Function<Player, InteractUI, ClickType, Unit>>()
+    val setFun = HashMap<Int, A3Function<Player, InteractUI, ItemStack, ItemStack>>()
     val limitSlot = HashMap<Int, LimitSlot>()
     val holder = UIHolder(this)
 
