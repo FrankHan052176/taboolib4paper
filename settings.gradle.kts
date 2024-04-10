@@ -41,7 +41,8 @@ include(
     "platform:platform-bungee",
     "platform:platform-bungee-impl",
     "platform:platform-velocity",
-    "platform:platform-velocity-impl"
+    "platform:platform-velocity-impl",
+    "platform:platform-afybroker"
 )
 include("module:module-another-ui")
 include("expansion:expansion-item-tags")

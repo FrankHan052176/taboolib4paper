@@ -93,8 +93,8 @@ public class PrimitiveLoader {
             load(REPO_CENTRAL, i[0], i[1], i[2], IS_ISOLATED_MODE, true, rule());
         }
         // 加载反射模块
-        load(REPO_TABOOLIB, TABOOPROJECT_GROUP + ".reflex", "reflex", "1.0.22", IS_ISOLATED_MODE, true, rule());
-        load(REPO_TABOOLIB, TABOOPROJECT_GROUP + ".reflex", "analyser", "1.0.22", IS_ISOLATED_MODE, true, rule());
+        load(REPO_TABOOLIB, TABOOPROJECT_GROUP + ".reflex", "reflex", "1.0.23", IS_ISOLATED_MODE, true, rule());
+        load(REPO_TABOOLIB, TABOOPROJECT_GROUP + ".reflex", "analyser", "1.0.23", IS_ISOLATED_MODE, true, rule());
         // 加载完整模块
         loadAll();
     }
@@ -146,6 +146,10 @@ public class PrimitiveLoader {
         String[][] rule = rule();
         // 加载 env 启动 Kotlin 环境
         load(REPO_TABOOLIB, TABOOLIB_GROUP, "common-env", TABOOLIB_VERSION, IS_ISOLATED_MODE, true, rule);
+        // 如果 Kotlin 环境启动失败
+        if (!TabooLib.isKotlinEnvironment()) {
+            throw new IllegalStateException("Failed to setup Kotlin environment.");
+        }
         // 加载 util 注册 ClassAppender Callback 回调函数
         load(REPO_TABOOLIB, TABOOLIB_GROUP, "common-util", TABOOLIB_VERSION, IS_ISOLATED_MODE, true, rule);
         // 加载剩余模块 >> 此时 isExternal 参数才有实际作用
