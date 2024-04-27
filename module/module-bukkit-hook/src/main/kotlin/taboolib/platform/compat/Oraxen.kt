@@ -1,6 +1,7 @@
 package taboolib.platform.compat
 
 import io.th0rgal.oraxen.api.OraxenItems
+import io.th0rgal.oraxen.api.events.OraxenItemsLoadedEvent
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
@@ -20,7 +21,7 @@ fun String?.getItem(): ItemStack {
 }
 
 fun String?.getItem(default: ItemStack): ItemStack {
-    if (this.isNullOrBlank()) return ItemStack(Material.AIR)
+    if (this.isNullOrBlank()) return default
     val oraxen = OraxenItems.getItemById(this)
     if (oraxen != null) return oraxen.build()
     val material = Material.matchMaterial(this)

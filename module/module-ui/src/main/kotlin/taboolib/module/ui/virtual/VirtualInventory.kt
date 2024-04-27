@@ -111,20 +111,16 @@ class VirtualInventory(val bukkitInventory: Inventory, storageContents: List<Ite
         remoteInventory?.sendSlotChange(slot, item ?: ItemStack(Material.AIR))
     }
 
-    override fun addItem(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
+    override fun addItem(vararg p0: ItemStack): HashMap<Int, ItemStack> {
         return bukkitInventory.addItem(*p0)
     }
 
-    override fun removeItem(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
+    override fun removeItem(vararg p0: ItemStack): HashMap<Int, ItemStack> {
         return bukkitInventory.removeItem(*p0)
     }
 
     override fun removeItemAnySlot(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
-        val map = HashMap<Int, ItemStack>()
-        for (p in p0) {
-            map.putAll(bukkitInventory.removeItemAnySlot(p))
-        }
-        return map
+        return bukkitInventory.removeItem(*p0)
     }
 
     override fun getContents(): Array<ItemStack?> {
@@ -141,7 +137,7 @@ class VirtualInventory(val bukkitInventory: Inventory, storageContents: List<Ite
     }
 
     override fun setStorageContents(p0: Array<out ItemStack?>) {
-        setStorageItems(p0.filterNotNull())
+        setStorageItems(p0.filterNotNull().toList())
     }
 
     override fun contains(p0: Material): Boolean {
@@ -205,9 +201,7 @@ class VirtualInventory(val bukkitInventory: Inventory, storageContents: List<Ite
     }
 
     override fun close(): Int {
-        val cnt = viewers.size
-        bukkitInventory.close()
-        return cnt
+        return close()
     }
 
     override fun getViewers(): MutableList<HumanEntity> {
@@ -223,7 +217,7 @@ class VirtualInventory(val bukkitInventory: Inventory, storageContents: List<Ite
     }
 
     override fun getHolder(p0: Boolean): InventoryHolder? {
-        return bukkitInventory.holder
+        return bukkitInventory.getHolder(p0)
     }
 
     override fun getLocation(): Location? {

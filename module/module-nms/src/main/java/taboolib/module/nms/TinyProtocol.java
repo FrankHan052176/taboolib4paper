@@ -416,7 +416,12 @@ public class TinyProtocol {
             uninjectedChannels.add(channel);
         }
         // See ChannelInjector in ProtocolLib, line 590
-        channel.eventLoop().execute(() -> channel.pipeline().remove(handlerName));
+        channel.eventLoop().execute(() -> {
+            var handel = channel.pipeline().context(handlerName);
+            if (handel != null) {
+                channel.pipeline().remove(handlerName);
+            }
+        });
     }
 
     /**

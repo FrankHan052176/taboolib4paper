@@ -64,11 +64,7 @@ class VirtualStorageInventory(val sourceInventory: VirtualInventory) : Inventory
     }
 
     override fun removeItemAnySlot(vararg p0: ItemStack): java.util.HashMap<Int, ItemStack> {
-        val map = HashMap<Int, ItemStack>()
-        for (p in p0) {
-            map.putAll(delegateInventory.removeItemAnySlot(p))
-        }
-        return map
+        return delegateInventory.removeItemAnySlot(*p0)
     }
 
     override fun getContents(): Array<ItemStack> {
@@ -76,7 +72,7 @@ class VirtualStorageInventory(val sourceInventory: VirtualInventory) : Inventory
     }
 
     override fun setContents(p0: Array<out ItemStack?>) {
-        sourceInventory.setStorageItems(p0.filterNotNull())
+        sourceInventory.setStorageItems(p0.filterNotNull().toList())
         delegateInventory.contents = p0
     }
 
@@ -149,9 +145,7 @@ class VirtualStorageInventory(val sourceInventory: VirtualInventory) : Inventory
     }
 
     override fun close(): Int {
-        val cnt = viewers.size
-        delegateInventory.close()
-        return cnt
+        return delegateInventory.close()
     }
 
     override fun getViewers(): MutableList<HumanEntity> {
@@ -167,7 +161,7 @@ class VirtualStorageInventory(val sourceInventory: VirtualInventory) : Inventory
     }
 
     override fun getHolder(p0: Boolean): InventoryHolder? {
-        return null
+        return delegateInventory.getHolder(p0)
     }
 
     override fun getLocation(): Location? {

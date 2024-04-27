@@ -21,7 +21,10 @@ subprojects {
         maven("https://repo1.maven.org/maven2")
         maven("https://maven.aliyun.com/repository/central")
         maven("https://repo.codemc.io/repository/nms/")
-        maven("http://ptms.ink:8081/repository/releases") {
+        maven("http://frankhan.top:8081/repository/maven-releases") {
+            isAllowInsecureProtocol = true
+        }
+        maven("http://sacredcraft.cn:8081/repository/releases") {
             isAllowInsecureProtocol = true
         }
         maven("https://repo.oraxen.com/releases")
@@ -82,7 +85,7 @@ subprojects
 
 fun PublishingExtension.applyToSub(subProject: Project) {
     repositories {
-        maven("http://192.168.1.11:8081/repository/maven-releases") {
+        maven("http://frankhan.top:8081/repository/maven-releases") {
             isAllowInsecureProtocol = true
             credentials {
                 username = "admin"

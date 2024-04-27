@@ -1,14 +1,18 @@
 package taboolib.module.ui.type.impl
 
 import org.bukkit.Material
+import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.submitAsync
 import taboolib.module.ui.ClickEvent
 import taboolib.module.ui.ClickType
 import taboolib.module.ui.type.*
 import taboolib.platform.util.isAir
 import taboolib.platform.util.isNotAir
+import kotlin.math.min
 
 open class StorableChestImpl(title: String) : ChestImpl(title), StorableChest {
 
@@ -94,12 +98,13 @@ open class StorableChestImpl(title: String) : ChestImpl(title), StorableChest {
                     val firstSlot = rule.firstSlot(it.inventory, currentItem)
                     // 目标位置不存在任何物品
                     // 防止覆盖物品
-                    if (firstSlot >= 0 && rule.readItem(it.inventory, firstSlot).isAir) {
-                        // 设置物品
-                        rule.writeItem(it.inventory, currentItem, firstSlot, it.clickEvent().click)
-                        // 移除物品
-                        it.currentItem?.type = Material.AIR
-                        it.currentItem = null
+                    if (firstSlot < 0) return@selfClick
+                    var item = rule.mergeItem(it.inventory, firstSlot, currentItem)
+                    it.currentItem?.type = Material.AIR
+                    it.currentItem = null
+                    while (item.isNotAir()) {
+                        val slot = rule.firstSlot(it.inventory, item)
+                        item = rule.mergeItem(it.inventory, slot, item)
                     }
                 } else if (it.rawSlot < it.inventory.size) {
                     // 获取行为
@@ -129,10 +134,19 @@ open class StorableChestImpl(title: String) : ChestImpl(title), StorableChest {
     object RuleImpl : StorableChest.Rule {
 
         /** 检查判定位置回调 **/
-        var checkSlot: ((inventory: Inventory, itemStack: ItemStack, slot: Int) -> Boolean) = { _, _, _ -> true }
+        var checkSlot: ((inventory: Inventory, itemStack: ItemStack, slot: Int) -> Boolean) = { _, _, _ -> defaultAllowClick }
 
         /** 获取可用位置回调 **/
-        var firstSlot: ((inventory: Inventory, itemStack: ItemStack) -> Int) = { _, _ -> -1 }
+        var firstSlot: ((inventory: Inventory, itemStack: ItemStack) -> Int) = { i, itemStack ->
+            var result = -1
+            for ((index, item) in i.withIndex()) {
+                if (item.type == itemStack.type) {
+                    result = index
+                    break
+                }
+            }
+            result
+        }
 
         /** 写入物品回调 **/
         var writeItem: ((inventory: Inventory, itemStack: ItemStack, slot: Int, type: BukkitClickType) -> Unit) = { inventory, item, slot, _ ->
@@ -144,6 +158,19 @@ open class StorableChestImpl(title: String) : ChestImpl(title), StorableChest {
             if (slot in 0 until inventory.size) inventory.getItem(slot)
             else null
         }
+
+        var mergeItem: ((inventory: Inventory, slot: Int, item:ItemStack) -> ItemStack?) = { inventory, slot, item ->
+            val si = inventory.getItem(slot)
+            if (si.isAir()) {
+                writeItem.invoke(inventory, item, slot, BukkitClickType.SHIFT_LEFT)
+                null
+            }else {
+                val amount = min(si.maxStackSize - si.amount, item.amount)
+                writeItem.invoke(inventory, si.add(amount), slot, BukkitClickType.SHIFT_LEFT)
+                item.subtract(amount)
+            }
+        }
+        override var defaultAllowClick = true
 
         /**
          * 定义判定位置
@@ -204,6 +231,10 @@ open class StorableChestImpl(title: String) : ChestImpl(title), StorableChest {
          */
         override fun readItem(readItem: (inventory: Inventory, slot: Int) -> ItemStack?) {
             this.readItem = readItem
+        }
+
+        override fun mergeItem(mergeItem: (inventory: Inventory, slot: Int, item:ItemStack) -> ItemStack?) {
+            this.mergeItem = mergeItem
         }
     }
 }

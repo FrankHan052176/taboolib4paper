@@ -15,6 +15,7 @@ import taboolib.module.ui.MenuHolder
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Chest
 import taboolib.module.ui.virtual.virtualize
+import taboolib.platform.compat.component
 import taboolib.platform.util.ItemBuilder
 import taboolib.platform.util.buildItem
 import java.util.concurrent.ConcurrentHashMap
@@ -341,11 +342,13 @@ open class ChestImpl(override var title: String) : Chest {
         this.isUpdateTitle = true
         try {
             // 获取所有打开页面的玩家
-            val viewers = lastInventory.viewers.toList()
+            val viewers = lastInventory.viewers
             // 重新构建页面
             build()
             // 重新打开页面
-            viewers.forEach { it.openMenu(lastInventory, changeId = false) }
+            viewers.forEach {
+                it.openMenu(lastInventory, changeId = false)
+            }
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }
@@ -356,7 +359,7 @@ open class ChestImpl(override var title: String) : Chest {
      * 创建标题
      */
     open fun createTitle(): Component {
-        return MiniMessage.miniMessage().deserialize(title)
+        return title.component()
     }
 
     /**

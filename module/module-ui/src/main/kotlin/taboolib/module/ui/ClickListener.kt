@@ -17,6 +17,7 @@ import taboolib.common.platform.Ghost
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.info
 import taboolib.common.platform.function.submit
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.ui.type.impl.ChestImpl
@@ -55,6 +56,7 @@ internal object ClickListener {
     @SubscribeEvent
     fun onClick(e: InventoryClickEvent) {
         val builder = MenuHolder.fromInventory(e.inventory) as? ChestImpl ?: return
+        info("click $builder")
         // 锁定主手
         if (builder.handLocked && (e.rawSlot - e.inventory.size - 27 == e.whoClicked.inventory.heldItemSlot || e.click == org.bukkit.event.inventory.ClickType.NUMBER_KEY && e.hotbarButton == e.whoClicked.inventory.heldItemSlot)) {
             e.isCancelled = true
@@ -109,6 +111,7 @@ internal object ClickListener {
     @SubscribeEvent
     fun onClose(e: InventoryCloseEvent) {
         val menu = MenuHolder.fromInventory(e.inventory) as? ChestImpl ?: return
+        info("close $menu")
         // 标题更新 && 跳过关闭回调
         if (menu.isUpdateTitle && menu.isSkipCloseCallbackOnUpdateTitle) {
             return

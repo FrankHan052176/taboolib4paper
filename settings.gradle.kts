@@ -51,8 +51,4 @@ include(
     "platform:platform-velocity-impl",
     "platform:platform-afybroker"
 )
-include("module:module-another-ui")
-include("expansion:expansion-item-tags")
-include("module:module-level-system")
 include("module:module-loots")
-findProject(":module:module-loots")?.name = "module-loots"

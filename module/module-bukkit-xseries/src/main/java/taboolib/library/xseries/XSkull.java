@@ -96,7 +96,7 @@ public class XSkull {
     /**
      * Does using a random UUID have any advantage?
      */
-    private static final UUID GAME_PROFILE_EMPTY_UUID = NULLABILITY_RECORD_UPDATE ? new UUID(0, 0) : null;
+    private static final UUID GAME_PROFILE_EMPTY_UUID = new UUID(0, 0);
     private static final String GAME_PROFILE_EMPTY_NAME = NULLABILITY_RECORD_UPDATE ? "" : null;
 
     /**

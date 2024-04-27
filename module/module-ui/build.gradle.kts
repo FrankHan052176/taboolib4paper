@@ -8,6 +8,7 @@ dependencies {
     compileOnly(project(":module:module-chat"))
     compileOnly(project(":module:module-nms"))
     compileOnly(project(":module:module-bukkit-util"))
+    compileOnly(project(":module:module-bukkit-hook"))
     compileOnly(project(":module:module-bukkit-xseries"))
     compileOnly(project(":platform:platform-bukkit"))
     // 服务端

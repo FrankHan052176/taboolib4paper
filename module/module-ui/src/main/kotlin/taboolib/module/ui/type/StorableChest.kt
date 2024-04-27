@@ -17,6 +17,7 @@ interface StorableChest : Chest {
      * 页面规则
      */
     interface Rule {
+        var defaultAllowClick: Boolean
 
         /**
          * 定义判定位置
@@ -56,6 +57,7 @@ interface StorableChest : Chest {
          * 读取物品回调
          */
         fun readItem(readItem: (inventory: Inventory, slot: Int) -> ItemStack?)
+        fun mergeItem(mergeItem: (inventory: Inventory, slot: Int, item: ItemStack) -> ItemStack?)
     }
 }
 
