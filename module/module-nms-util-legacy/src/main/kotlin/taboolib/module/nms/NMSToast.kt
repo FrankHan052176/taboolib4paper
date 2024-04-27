@@ -83,7 +83,8 @@ private val advancementsMap by unsafeLazy {
  * @param frame 成就框架
  * @param background 成就背景图片
  */
-fun Player.sendToast(icon: Material, message: String, frame: ToastFrame = ToastFrame.TASK, background: ToastBackground = ToastBackground.ADVENTURE, customModelData: Int = 0) {
+@Deprecated("停止维护")
+fun Player.sendToast(icon: Material, message: String, frame: ToastFrame = ToastFrame.TASK, background: ToastBackground = ToastBackground.ADVENTURE) {
     if (MinecraftVersion.majorLegacy >= 12002) {
         warning("\"sendToast\" is not supported in Minecraft 1.20.2")
         return
@@ -92,7 +93,7 @@ fun Player.sendToast(icon: Material, message: String, frame: ToastFrame = ToastF
         throw UnsupportedVersionException()
     }
     val cache = Toast(icon, message, frame)
-    val jsonToast = toJsonToast(icon.invokeMethod<Any>("getKey").toString(), message, frame, background, customModelData)
+    val jsonToast = toJsonToast(icon.invokeMethod<Any>("getKey").toString(), message, frame, background)
     // 在主线程操作
     submit {
         // 向服务器注册成就
@@ -102,7 +103,7 @@ fun Player.sendToast(icon: Material, message: String, frame: ToastFrame = ToastF
         // 向玩家注册成就
         awardAdvancement(this@sendToast, namespaceKey)
         // 延迟注销，否则会出问题
-        submit(delay = 2) {
+        submit(delay = 20) {
             revokeAdvancement(this@sendToast, namespaceKey)
             ejectAdvancement(namespaceKey)
         }
@@ -141,25 +142,27 @@ private fun revokeAdvancement(player: Player, key: NamespacedKey) {
  * 将成就注入到服务器
  */
 private fun injectAdvancement(key: NamespacedKey, toast: JsonObject): NamespacedKey {
-    // 获取 MinecraftKey
-    val localMinecraftKey = classCraftNamespacedKey.invokeMethod<Any>("toMinecraft", key, isStatic = true)!!
-    // 创建 LootDeserializationContext
-    val lootDeserializationContext = constructorLootDeserializationContext.newInstance(localMinecraftKey, lootDataManager)
-    // 创建 SerializedAdvancement (public static SerializedAdvancement a(JsonObject var0, LootDeserializationContext var1))
-    // 在 1.12.2 版本下，方法 "a" 转移到了 Advancement 类中
-    val localSerializedAdvancement = if (MinecraftVersion.majorLegacy >= 12002) {
-        classAdvancement.invokeMethod<Any>("a", toast, lootDeserializationContext, isStatic = true)
-    } else {
-        classSerializedAdvancement.invokeMethod<Any>("a", toast, lootDeserializationContext, isStatic = true)
-    }
-    if (localSerializedAdvancement != null) {
-        // 注入到服务器
-        // 1.20.2
-        // public Map<MinecraftKey, AdvancementHolder> advancements;
-        if (MinecraftVersion.majorLegacy >= 12002) {
-            advancementsMap[localMinecraftKey] = constructorAdvancementHolder.newInstance(localMinecraftKey, localSerializedAdvancement)
+    if (Bukkit.getAdvancement(key) == null) {
+        // 获取 MinecraftKey
+        val localMinecraftKey = classCraftNamespacedKey.invokeMethod<Any>("toMinecraft", key, isStatic = true)!!
+        // 创建 LootDeserializationContext
+        val lootDeserializationContext = constructorLootDeserializationContext.newInstance(localMinecraftKey, lootDataManager)
+        // 创建 SerializedAdvancement (public static SerializedAdvancement a(JsonObject var0, LootDeserializationContext var1))
+        // 在 1.12.2 版本下，方法 "a" 转移到了 Advancement 类中
+        val localSerializedAdvancement = if (MinecraftVersion.majorLegacy >= 12002) {
+            classAdvancement.invokeMethod<Any>("a", toast, lootDeserializationContext, isStatic = true)
         } else {
-            advancements.invokeMethod<Any>("a", hashMapOf(localMinecraftKey to localSerializedAdvancement))
+            classSerializedAdvancement.invokeMethod<Any>("a", toast, lootDeserializationContext, isStatic = true)
+        }
+        if (localSerializedAdvancement != null) {
+            // 注入到服务器
+            // 1.20.2
+            // public Map<MinecraftKey, AdvancementHolder> advancements;
+            if (MinecraftVersion.majorLegacy >= 12002) {
+                advancementsMap[localMinecraftKey] = constructorAdvancementHolder.newInstance(localMinecraftKey, localSerializedAdvancement)
+            } else {
+                advancements.invokeMethod<Any>("a", hashMapOf(localMinecraftKey to localSerializedAdvancement))
+            }
         }
     }
     return key
